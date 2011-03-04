@@ -1,0 +1,24 @@
+﻿<Window x:Class="Pandemic.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Pandemic" Height="485" Width="335" ResizeMode="NoResize" Icon="/Pandemic;component/Images/Red1_%20%282%29.ico" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
+    <Grid Name="master" Height="451" Width="333">
+        <Grid Name="main" HorizontalAlignment="Left" Margin="59,266,0,12" Width="202">
+            <Button Content="Single Player" Height="23" HorizontalAlignment="Left" Margin="32,23,0,0" Name="btnSingle" VerticalAlignment="Top" Width="134" Click="btnSingle_Click" />
+            <Button Content="Multiplayer" Height="23" HorizontalAlignment="Left" Margin="32,63,0,0" Name="btnMulti" VerticalAlignment="Top" Width="134" Click="btnMulti_Click" />
+            <Button Content="Options" Height="23" HorizontalAlignment="Left" Margin="32,103,0,0" Name="btnOpts" VerticalAlignment="Top" Width="134" />
+            <Button Content="Exit" Height="23" HorizontalAlignment="Left" Margin="32,143,0,0" Name="btnExit" VerticalAlignment="Top" Width="134" Click="btnExit_Click" />
+        </Grid>
+        <Grid Height="256" HorizontalAlignment="Left" Margin="-1,192,0,0" Name="multi" VerticalAlignment="Top" Width="307" Visibility="Hidden">
+            <Button Content="Join Game" Height="23" HorizontalAlignment="Left" Margin="16,97,0,0" Name="btnJoin" VerticalAlignment="Top" Width="134" Click="btnJoin_Click" />
+            <Button Content="Host Game" Height="23" HorizontalAlignment="Left" Margin="171,97,0,0" Name="btnHost" VerticalAlignment="Top" Width="134" Click="btnHost_Click" />
+            <TextBox Height="25" HorizontalAlignment="Left" Margin="16,66,0,0" Name="ipConnect" VerticalAlignment="Top" Width="134" Background="#7D555252" FontWeight="Bold" Foreground="White" Text="" FontSize="16" TextAlignment="Center"></TextBox>
+            <Button Content="Back" Height="23" HorizontalAlignment="Left" Margin="16,224,0,0" Name="btnBack" VerticalAlignment="Top" Width="75" Click="btnBack_Click" />
+            <TextBox Background="#7D555252" FontSize="16" FontWeight="Bold" Foreground="White" Height="25" HorizontalAlignment="Left" Margin="92,20,0,0" Name="txtName" Text="" TextAlignment="Center" VerticalAlignment="Top" Width="134" IsTabStop="True" AcceptsTab="False" />
+        </Grid>
+    </Grid>
+
+    <Window.Background>
+        <ImageBrush ImageSource="/Pandemic;component/Images/cover.jpg" Stretch="UniformToFill" TileMode="None" />
+    </Window.Background>
+</Window>

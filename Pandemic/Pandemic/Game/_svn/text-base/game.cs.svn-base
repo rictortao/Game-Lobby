@@ -1,0 +1,820 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+
+using Pandemic.Game.DataTypes;
+using Pandemic.Game.DataTypes.Cards;
+using Pandemic.Game.DataTypes.Decks;
+
+namespace Pandemic.Game
+{
+    class game
+    {
+        public Mutex mux = new Mutex();
+        /* Game Values */
+        lobbyVals settings;
+
+        delegate void findCity(Location city);
+        int stationLimit = 6;
+
+        static GameState state = new GameState();
+
+        /*
+        virusDeck vDeck;
+        virusDeck vDiscard;
+
+        public static playerDeck pDeck;
+        playerDeck pDiscard;
+
+        public static List<Location> locations;
+        List<Player> players;
+
+        int stationLimit = 6;
+        public static int Outbreaks = 0;
+        int infectionRate = 0;
+        int[] InfectionRateConv = new int[] { 2, 2, 2, 3, 3, 4, 4 }; //Number of cards drawn on infection phase
+
+        public static int[] vBlocks = new int[] { 24, 24, 24, 24 };
+
+        bool[] cures = new bool[] { false, false, false, false };
+        bool[] cured = new bool[] { false, false, false, false };*/
+
+        #region /* City Arrays */
+        public static string[] blue = new string[]{
+                "Atlanta","Chicago","Essen","London",
+                "Madrid","Milan","New York","Paris",
+                "San Francisco","St. Petersburg","Toronto","Washington"            
+            };
+        public static string[] yellow = new string[]{
+                "Bogota","Buenos Aires","Johannesburg","Khartoum",
+                "Kinshasa","Lagos","Lima","Los Angeles",
+                "Mexico City","Miami","Santiago","Sao Paulo"
+            };
+        public static string[] black = new string[]{
+                "Algiers","Baghdad","Cairo","Chennai",
+                "Delhi","Istanbul","Karachi","Kolkata",
+                "Moscow","Mumbai","Riyadh","Tehran"
+            };
+        public static string[] orange = new string[]{
+                "Bangkok","Beijing","Ho Chi Minh City","Hong Kong",
+                "Jakarta","Manila","Osaka","Seoul",
+                "Shanghai","Sydney","Taipei","Tokyo"
+            };
+        #endregion
+
+        /* Settings */
+        int difficulty;
+
+
+        /* Setup Game Board:
+         *  Build Decks and Locations
+         *  Build Players, Draw Hands
+         *  Set Player Deck
+         *  Infect some cities
+         */
+        public game(lobbyVals settings)
+        {
+            mux.WaitOne();
+            this.settings = settings;
+
+            difficulty = settings.difficulty;
+
+            buildDecks();
+            buildLocations();
+
+            state.vDeck.Shuffle();
+            state.pDeck.Shuffle();
+
+            // Build Players
+            state.players = new List<Player>();
+            for (int i = 0; i < settings.players.Length; i++)
+            {
+                if (settings.slots[i]) // Check if Slot is Empty
+                {
+                    state.players.Add(new Player(settings.players[i], settings.roles[i]));
+
+                }
+            }
+
+            // Draw Player Hands
+            drawHand();
+
+            initPlayerDeck();
+            
+            buildStation(blue[0]); //Build Station in Atlanta
+
+            initInfection();            
+
+            int m = 0;
+            mux.ReleaseMutex();
+        }
+
+        #region /* Init Board */
+        private void buildDecks()
+        {
+            state.vDeck = new virusDeck();
+            state.pDeck = new playerDeck();
+
+            state.locations = new List<Location>();
+
+            string[] events = new string[]{
+                "Forecast",
+                "Airlift",
+                "Resilient Population",
+                "One Quiet Night",
+                "Government Grant"
+            };
+
+            string[][] locs = new string[][]{
+                blue, yellow, black, orange
+            };
+
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < locs[i].Length; j++)
+                {
+                    state.vDeck.cards.Add(new virusCard(i, locs[i][j]));
+                    state.pDeck.cards.Add(new locationCard(i, locs[i][j]));
+
+                    state.locations.Add(new Location(locs[i][j], i));
+                }
+            }
+
+            for(int i = 0; i < events.Length; i++)
+            {
+                state.pDeck.cards.Add(new eventCard(events[i]));
+            }
+            
+        }
+
+        private void buildLocations()
+        {
+
+            Location temp;
+            List<Location> locations = state.locations;
+
+            foreach (Location city in locations)
+            {
+                switch (city.Name)
+                {
+                    #region A
+                    case "Algiers":                        
+                        temp = locations.Find(o => o.Name == black[2]); //Cairo
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == blue[4]); //Madrid
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == blue[7]); //Paris
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[5]); //Istanbul
+                        city.addConn(ref temp);
+                        break;
+                    case "Atlanta":
+                        temp = locations.Find(o => o.Name == blue[1]); //Chicago
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == yellow[9]); //Miami
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == blue[11]); //Washington
+                        city.addConn(ref temp);
+                        break;
+                    #endregion
+                    #region B
+                    case "Baghdad":
+                        temp = locations.Find(o => o.Name == black[2]); //Cairo
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[5]); //Istanbul
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[6]); //Karachi
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[10]); //Riyadh
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[11]); //Tehran
+                        city.addConn(ref temp);
+                        break;
+                    case "Bangkok":
+                        temp = locations.Find(o => o.Name == black[3]); //Chennai
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[2]); //Ho Chi Hinh City
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[3]); //Hong Kong
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[4]); //Jakarta
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[7]); //Kolkata
+                        city.addConn(ref temp);
+                        break;
+                    case "Beijing":
+                        temp = locations.Find(o => o.Name == orange[7]); //Seoul
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[8]); //Shanghai
+                        city.addConn(ref temp);
+                        break;
+                    case "Bogota":
+                        temp = locations.Find(o => o.Name == yellow[1]); //Buenos Aires
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == yellow[6]); //Lima
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == yellow[8]); //Mexico City
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == yellow[9]); //Miami
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == yellow[11]); //Sao Paulo
+                        city.addConn(ref temp);
+                        break;
+                    case "Buenos Aires":
+                        temp = locations.Find(o => o.Name == yellow[0]); //Bogota
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == yellow[11]); //Sao Paulo
+                        city.addConn(ref temp);
+                        break;
+                    #endregion
+                    #region C
+                    case "Cairo":
+                        temp = locations.Find(o => o.Name == black[0]); //Algiers
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[1]); //Baghdad
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[5]); //Istanbul
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == yellow[3]); //Khartoum
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[10]); //Riyadh
+                        city.addConn(ref temp);
+                        break;
+                    case "Chennai":
+                        temp = locations.Find(o => o.Name == orange[0]); //Bangkok
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[4]); //Delhi
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[4]); //Jakarta
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[7]); //Kolkata
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[9]); //Mumbai
+                        city.addConn(ref temp);
+                        break;
+                    case "Chicago":
+                        temp = locations.Find(o => o.Name == blue[0]); //Atlanta
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == yellow[7]); //Los Angeles
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == yellow[8]); //Mexico City
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == blue[8]); //San Francisco
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == blue[10]); //Toronto
+                        city.addConn(ref temp);
+                        break;
+                    #endregion
+                    #region D
+                    case "Delhi":
+                        temp = locations.Find(o => o.Name == black[3]); //Chennai
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[6]); //Karachi
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[7]); //Kolkata
+                        city.addConn(ref temp);                        
+                        temp = locations.Find(o => o.Name == black[9]); //Mumbai
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[11]); //Tehran
+                        city.addConn(ref temp);
+                        break;
+                    #endregion
+                    #region E
+                    case "Essen":
+                        temp = locations.Find(o => o.Name == blue[3]); //London
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == blue[5]); //Milan
+                        city.addConn(ref temp);                        
+                        temp = locations.Find(o => o.Name == blue[7]); //Paris
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == blue[9]); //St. Petersburg
+                        city.addConn(ref temp);
+                        break;
+                    #endregion
+                    #region H
+                    case "Ho Chi Minh City":
+                        temp = locations.Find(o => o.Name == orange[3]); //Hong Kong
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[0]); //Bangkok
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[5]); //Manila
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[4]); //Jakarta
+                        city.addConn(ref temp);
+                        break;
+                    case "Hong Kong":
+                        temp = locations.Find(o => o.Name == orange[8]); //Shanghai
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[0]); //Bangkok
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[10]); //Taipei
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[2]); //Ho Chi Minh City
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[7]); //Kolkata
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[5]); //Manila
+                        city.addConn(ref temp);
+                        break;
+                    #endregion
+                    #region I
+                    case "Istanbul":
+                        temp = locations.Find(o => o.Name == blue[5]); //Milan
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == blue[9]); //St. Petersburg
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[8]); //Moscow
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[1]); //Baghdad
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[2]); //Cairo
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[0]); //Algiers
+                        city.addConn(ref temp);
+                        break;
+                    #endregion
+                    #region J
+                    case "Jakarta":
+                        temp = locations.Find(o => o.Name == orange[2]); //Ho Chi Minh City
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[0]); //Bangkok
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[9]); //Sydney
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[3]); //Chennai
+                        city.addConn(ref temp);
+                        break;
+                    case "Johannesburg":
+                        temp = locations.Find(o => o.Name == yellow[4]); //Kinshasa
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == yellow[3]); //Khartoum
+                        city.addConn(ref temp);
+                        break;
+                    #endregion
+                    #region K
+                    case "Karachi":
+                        temp = locations.Find(o => o.Name == black[10]); //Riyadh
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[1]); //Baghdad
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[4]); //Delhi
+                        city.addConn(ref temp);                        
+                        temp = locations.Find(o => o.Name == black[9]); //Mumbai
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[11]); //Tehran
+                        city.addConn(ref temp);
+                        break;
+                    case "Khartoum":
+                        temp = locations.Find(o => o.Name == black[2]); //Cairo
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == yellow[5]); //Lagos
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == yellow[4]); //Kinshasa
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == yellow[2]); //Johannesburg
+                        city.addConn(ref temp);
+                        break;
+                    case "Kinshasa":
+                        temp = locations.Find(o => o.Name == yellow[5]); //Lagos
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == yellow[3]); //Khartoum
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == yellow[2]); //Johannesburg
+                        city.addConn(ref temp);
+                        break;
+                    case "Kolkata":
+                        temp = locations.Find(o => o.Name == black[3]); //Chennai
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[0]); //Bangkok
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[3]); //Hong Kong
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[4]); //Delhi
+                        city.addConn(ref temp);
+                        break;
+                    #endregion
+                    #region L
+                    case "Lagos":
+                        temp = locations.Find(o => o.Name == yellow[11]); //Sao Paulo
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == yellow[3]); //Khartoum
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == yellow[4]); //Kinshasa
+                        city.addConn(ref temp);
+                        break;
+                    case "Lima":
+                        temp = locations.Find(o => o.Name == yellow[8]); //Mexico City
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == yellow[0]); //Botoga
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == yellow[10]); //Santiago
+                        city.addConn(ref temp);
+                        break;
+                    case "London":
+                        temp = locations.Find(o => o.Name == blue[6]); //New York
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == blue[4]); //Madrid
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == blue[7]); //Paris
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == blue[2]); //Essen
+                        city.addConn(ref temp);
+                        break;
+                    case "Los Angeles":
+                        temp = locations.Find(o => o.Name == blue[8]); //San Francisco
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == blue[1]); //Chicago
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == yellow[8]); //Mexico City
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[9]); //Sydney
+                        city.addConn(ref temp);
+                        break;
+                    #endregion
+                    #region M
+                    case "Madrid":
+                        temp = locations.Find(o => o.Name == blue[6]); //New York
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == blue[3]); //London
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == blue[7]); //Paris
+                        city.addConn(ref temp);                        
+                        temp = locations.Find(o => o.Name == black[0]); //Algiers
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == yellow[11]); //Sao Paulo
+                        city.addConn(ref temp);
+                        break;
+                    case "Manila":
+                        temp = locations.Find(o => o.Name == orange[10]); //Taipei
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[3]); //Hong Kong
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[2]); //Ho Chi Minh City
+                        city.addConn(ref temp);                        
+                        temp = locations.Find(o => o.Name == orange[9]); //Sydney
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == blue[8]); //San Francisco
+                        city.addConn(ref temp);  
+                        break;
+                    case "Mexico City":
+                        temp = locations.Find(o => o.Name == yellow[7]); //Los Angeles
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == blue[1]); //Chicago
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == yellow[9]); //Miami
+                        city.addConn(ref temp);                        
+                        temp = locations.Find(o => o.Name == yellow[0]); //Botoga
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == yellow[6]); //Lima
+                        city.addConn(ref temp); 
+                        break;
+                    case "Miami":
+                        temp = locations.Find(o => o.Name == blue[0]); //Atlanta
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == blue[11]); //Washington
+                        city.addConn(ref temp);                        
+                        temp = locations.Find(o => o.Name == yellow[0]); //Botoga
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == yellow[8]); //Mexico City
+                        city.addConn(ref temp);
+                        break;
+                    case "Milan":
+                        temp = locations.Find(o => o.Name == blue[2]); //Essen
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[5]); //Istanbul
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == blue[7]); //Paris
+                        city.addConn(ref temp);
+                        break;
+                    case "Moscow":
+                        temp = locations.Find(o => o.Name == blue[9]); //St. Petersburg
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[5]); //Istanbul
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[11]); //Tehran
+                        city.addConn(ref temp);
+                        break;
+                    case "Mumbai":
+                        temp = locations.Find(o => o.Name == black[6]); //Karachi
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[4]); //Delhi
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[3]); //Chennai
+                        city.addConn(ref temp);
+                        break;
+                    #endregion
+                    #region N
+                    case "New York":
+                        temp = locations.Find(o => o.Name == blue[10]); //Toronto
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == blue[11]); //Washington
+                        city.addConn(ref temp);                        
+                        temp = locations.Find(o => o.Name == blue[3]); //London
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == blue[4]); //Madrid
+                        city.addConn(ref temp);
+                        break;
+                    #endregion
+                    #region O
+                    case "Osaka":
+                        temp = locations.Find(o => o.Name == orange[11]); //Tokyo
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[10]); //Taipei
+                        city.addConn(ref temp);
+                        break;
+                    #endregion
+                    #region P
+                    case "Paris":
+                        temp = locations.Find(o => o.Name == blue[3]); //London
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == blue[4]); //Madrid
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[0]); //Algiers
+                        city.addConn(ref temp);                        
+                        temp = locations.Find(o => o.Name == blue[5]); //Milan
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == blue[2]); //Essen
+                        city.addConn(ref temp); 
+                        break;
+                    #endregion
+                    #region R
+                    case "Riyadh":
+                        temp = locations.Find(o => o.Name == black[2]); //Cairo
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[1]); //Baghdad
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[6]); //Karachi
+                        city.addConn(ref temp);
+                        break;
+                    #endregion
+                    #region S
+                    case "San Francisco":
+                        temp = locations.Find(o => o.Name == orange[11]); //Tokyo
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[5]); //Manila
+                        city.addConn(ref temp);                        
+                        temp = locations.Find(o => o.Name == yellow[7]); //Los Angeles
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == blue[1]); //Chicago
+                        city.addConn(ref temp);
+                        break;
+                    case "Santiago":
+                        temp = locations.Find(o => o.Name == yellow[6]); //Lima
+                        city.addConn(ref temp); 
+                        break;
+                    case "Sao Paulo":
+                        temp = locations.Find(o => o.Name == yellow[0]); //Botoga
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == yellow[1]); //Buenos Aires
+                        city.addConn(ref temp);                        
+                        temp = locations.Find(o => o.Name == yellow[5]); //Lagos
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == blue[4]); //Madrid    
+                        city.addConn(ref temp);
+                        break;
+                    case "Seoul":
+                        temp = locations.Find(o => o.Name == orange[1]); //Beijing
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[8]); //Shanghai
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[11]); //Tokyo
+                        city.addConn(ref temp);
+                        break;
+                    case "Shanghai":
+                        temp = locations.Find(o => o.Name == orange[1]); //Beijing
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[7]); //Seoul
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[11]); //Tokyo
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[10]); //Taipei
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[3]); //Hong Kong
+                        city.addConn(ref temp);
+                        break;
+                    case "St. Petersburg":
+                        temp = locations.Find(o => o.Name == blue[2]); //Essen
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[5]); //Istanbul
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[8]); //Moscow
+                        city.addConn(ref temp);
+                        break;
+                    case "Sydney":
+                        temp = locations.Find(o => o.Name == orange[4]); //Jakarta
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[6]); //Manila
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == yellow[7]); //Los Angeles
+                        city.addConn(ref temp);
+                        break;
+                    #endregion
+                    #region T
+                    case "Taipei":
+                        temp = locations.Find(o => o.Name == orange[5]); //Manila
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[6]); //Osaka
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[8]); //Shanghai
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[3]); //Hong Kong
+                        city.addConn(ref temp);
+                        break;
+                    case "Tehran":
+                        temp = locations.Find(o => o.Name == black[8]); //Moscow
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[1]); //Baghdad
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[6]); //Karachi
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == black[4]); //Delhi
+                        city.addConn(ref temp);
+                        break;
+                    case "Tokyo":
+                        temp = locations.Find(o => o.Name == orange[7]); //Seoul
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[6]); //Osaka
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == orange[8]); //Shanghai
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == blue[8]); //San Francisco
+                        city.addConn(ref temp);
+                        break;
+                    case "Toronto":
+                        temp = locations.Find(o => o.Name == blue[11]); //Washington
+                        city.addConn(ref temp);                        
+                        temp = locations.Find(o => o.Name == blue[6]); //New York
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == blue[1]); //Chicago
+                        city.addConn(ref temp);
+                        break;
+                    #endregion
+                    #region W
+                    case "Washington":
+                        temp = locations.Find(o => o.Name == blue[0]); //Atlanta
+                        city.addConn(ref temp);                        
+                        temp = locations.Find(o => o.Name == blue[6]); //New York
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == yellow[9]); //Miami
+                        city.addConn(ref temp);
+                        temp = locations.Find(o => o.Name == blue[10]); //Toronto
+                        city.addConn(ref temp);
+                        break;
+                    #endregion
+                }
+            }
+        }
+
+        private void drawHand()
+        {
+            foreach (Player p in state.players)
+            {
+                p.Draw(6 - state.players.Count);
+            }
+        }
+
+        private void initInfection()
+        {
+            Card card;
+
+            state.vDiscard = new virusDeck();
+
+            for (int i = 3; i > 0; i--) //Number of Infections
+            {
+                for (int j = 0; j < 3; j++) //Draw 3 Cards per Infection Rate
+                {
+                    card = state.vDeck.Draw();
+                    state.locations.Find(o => o.Name == card.Title).addInfection(i);
+
+                    state.vDiscard.cards.Insert(0, card);
+                }
+            }
+        }
+
+        private void initPlayerDeck()
+        {
+            playerDeck[] piles = new playerDeck[settings.difficulty + 4];
+            for (int i = 0; i < piles.Length; i++)
+            {
+                piles[i] = new playerDeck();
+                piles[i].cards.Add(new epidemicCard());
+            }
+
+            for (int i = 0; i < state.pDeck.cards.Count(); i++)
+            {
+                piles[i % piles.Count()].cards.Add(state.pDeck.cards[i]);
+            }
+
+            state.pDeck = new playerDeck();
+            for (int i = 0; i < piles.Length; i++)
+            {
+                piles[i].Shuffle();
+                state.pDeck.cards.AddRange(piles[i].cards);
+            }
+        }
+        #endregion
+
+        #region /* Basic Actions */
+        public void Drive(string name, string location)
+        {
+        }
+
+        public void dFlight(string name)
+        {
+        }
+
+        public void cFlight(string name)
+        {
+        }
+
+        public void sFlight(string name)
+        {
+        }
+
+        #endregion
+
+        #region /* Special Actions */
+        public bool buildStation(string city)
+        {
+            if (stationLimit > 0 && state.locations.Find(o => o.Name == city).buildStation())
+            {
+                stationLimit--;
+                return true;
+            }
+            else
+                return false;
+        }
+
+        public void discoverCure(string name, Card[] cards)
+        {
+        }
+
+        public void treatCity()
+        {
+        }
+
+        public void treatCity(int color)
+        {
+        }
+
+        public void shareKnowledge()
+        {
+        }
+
+        #endregion
+
+        #region /* gameUtilities */
+        private void startTurn()
+        {
+            //Give player 4 action points
+            //player draws 2 cards
+        }
+
+        private void infectorPhase()
+        {
+            Card target;
+
+            foreach (Location city in state.locations)
+                city.resetOutbreak();
+
+            for (int i = 0; i < state.InfectionRateConv[state.infectionRate]; i++)
+            {
+                target = state.vDeck.Draw();
+                getCity(target.Title).addInfection(1);
+                state.vDiscard.cards.Add(target);
+            }
+        }
+
+        private void epidemic()
+        {
+            state.infectionRate++;
+
+            Card epicenter = state.vDeck.Draw();
+            getCity(epicenter.Title).addInfection(3);
+
+            // Add card to discard pile
+            state.vDiscard.cards.Add(epicenter);
+
+            // Replace vDiscard on top of vDeck
+            state.vDiscard.Shuffle();
+            state.vDeck.cards.AddRange(state.vDiscard.cards);
+
+            // Empty discard pile
+            state.vDiscard = new virusDeck();
+        }
+        private Location getCity(string cityName)
+        {
+            return state.locations.Find(o => o.Name == cityName);
+        }
+        private Player getPlayer(string name)
+        {
+            return state.players.Find(o => o.Name == name);
+        }
+        #endregion
+
+        public List<Location> Locations { get { return state.locations; } }
+        public static GameState State { get { return state; } }
+    }
+}

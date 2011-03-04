@@ -1,0 +1,8 @@
+﻿<Window x:Class="Pandemic.Game.UI.vDiscard"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Infection Discard" Height="382" Width="702" xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation" WindowStartupLocation="CenterOwner">
+    <Grid>
+        <telerik:RadCarousel HorizontalAlignment="Left" Name="cardCarousel" VerticalAlignment="Top" Height="343" Width="680" Loaded="cardCarousel_Loaded" Background="Black" />
+    </Grid>
+</Window>

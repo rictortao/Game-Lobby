@@ -1,0 +1,21 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Resources;
+using System.Reflection;
+
+namespace Pandemic.Game.DataTypes.Cards
+{
+    public class Card
+    {
+        private string title;
+
+        public Card(string input)
+        {
+            title = input;
+        }
+
+        public string Title { get { return title; } }
+    }
+}

@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="Pandemic.Game.UI.CityOverlay"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="69" d:DesignWidth="84" MouseLeftButtonDown="UserControl_MouseLeftButtonDown" BorderBrush="Black" BorderThickness="0" AllowDrop="True">
+    <Grid x:Name="grid" Background="#00000000">
+        <Image Height="42" HorizontalAlignment="Left" Margin="42,-8,0,0" Name="vRed" Stretch="Uniform" VerticalAlignment="Top" Width="42" RenderTransformOrigin="42,0" />
+        <Image Height="42" HorizontalAlignment="Left" Margin="42,27,0,0" Name="vBlue" Stretch="Uniform" VerticalAlignment="Top" Width="42" RenderTransformOrigin="42,42" />
+        <Image Height="42" HorizontalAlignment="Left" Margin="0,27,0,0" Name="vYellow" Stretch="Uniform" VerticalAlignment="Top" Width="42" RenderTransformOrigin="0,42" Panel.ZIndex="2" />
+        <Image Height="42" HorizontalAlignment="Left" Name="vBlack" Stretch="Uniform" VerticalAlignment="Top" Width="42" Margin="0,-8,0,0" />
+        <Image Height="30" HorizontalAlignment="Left" Margin="38,12,0,0" Name="imgStation" Stretch="Uniform" VerticalAlignment="Top" Width="34" Source="/Pandemic;component/Images/station.png" Panel.ZIndex="1" Visibility="Hidden" DataContext="{Binding}" />
+        <Image Height="41" HorizontalAlignment="Left" Margin="4,-10,0,0" Name="pos0" Stretch="Uniform" VerticalAlignment="Top" Width="25" Source="/Pandemic;component/Images/Pawns/redPawn.png" AllowDrop="False" MouseLeftButtonDown="pos_MouseLeftButtonDown" MouseMove="pos_MouseMove" />
+    </Grid>
+</UserControl>

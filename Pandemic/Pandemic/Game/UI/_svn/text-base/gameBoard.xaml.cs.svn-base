@@ -1,0 +1,258 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+using System.Threading;
+
+using Pandemic.Game.DataTypes;
+
+namespace Pandemic.Game.UI
+{
+    /// <summary>
+    /// Interaction logic for gameBoard.xaml
+    /// </summary>
+    public partial class gameBoard : Window
+    {
+        private game Game;
+
+        static List<CityDetail> details;
+        List<CityOverlay> cities;
+
+        bool moving = false;
+        double origX;
+        double origY;
+
+        double scale = 1.2;
+        double currScale = 1;
+
+        public gameBoard()
+        {
+            InitializeComponent();
+
+            grid1.Margin = new Thickness(0, 0, 0, 0);
+
+            lobbyVals test = new lobbyVals();
+
+            test.difficulty = 2;
+            test.players[0] = "Dave";
+            test.roles[0] = 3;
+            test.players[1] = "Bob";
+            test.roles[1] = 2;
+
+            test.slots[2] = false;
+            test.slots[3] = false;
+
+            Game = new game(test);
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            details = new List<CityDetail>();
+            cities = new List<CityOverlay>();
+
+            foreach (CityDetail d in FindVisualChildren<CityDetail>(this))
+            {
+                d.lblCity.Content = d.Name.Substring(0, d.Name.Length - 1);
+                details.Add(d);
+            }
+
+            foreach (CityOverlay c in FindVisualChildren<CityOverlay>(this))
+            {
+                c.setDetail(details.Find(o => o.Name == c.Name + 'D'));
+                cities.Add(c);
+            }
+
+            /* Init Board with Game Info */
+
+            Game.mux.WaitOne();
+            foreach (Location l in Game.Locations)
+            {
+                for(int color = 0; color < 4; color++)
+                {
+                    
+                    if (l.viruses[color] > 0)
+                    {
+                        try
+                        {
+                            cities.Find(o => o.Name == l.Name.Replace(" ", "")).setV(color, l.viruses[color]);
+                        }
+                        catch { }
+                        //MessageBox.Show("Infected!!!");
+                    }
+                }
+            }
+            Game.mux.ReleaseMutex();
+        }
+
+        public static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
+        {
+            if (depObj != null)
+            {
+                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+                {
+                    DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
+                    if (child != null && child is T)
+                    {
+                        yield return (T)child;
+                    }
+
+                    foreach (T childOfChild in FindVisualChildren<T>(child))
+                    {
+                        yield return childOfChild;
+                    }
+                }
+            }
+        }
+
+
+        private void grid1_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
+        private void grid1_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            moving = true;
+            origX = e.GetPosition(this).X;
+            origY = e.GetPosition(this).Y;
+        }
+
+        private void grid1_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            moving = false;
+        }
+
+        private void grid1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (moving)
+            {
+                grid1.Margin = new Thickness((grid1.Margin.Left - (origX - e.GetPosition(this).X)), (grid1.Margin.Top - (origY - e.GetPosition(this).Y)), 0, 0);
+
+                origX = e.GetPosition(this).X;
+                origY = e.GetPosition(this).Y;
+
+                if (Math.Abs(grid1.Margin.Left) + (this.Width) > grid1.Width)
+                    grid1.Margin = new Thickness((-(grid1.Width)) + (this.Width), grid1.Margin.Top, 0, 0);
+                if (Math.Abs(grid1.Margin.Top) + (this.ActualHeight - System.Windows.Forms.SystemInformation.ToolWindowCaptionHeight) > grid1.ActualHeight)
+                    grid1.Margin = new Thickness(grid1.Margin.Left, (-(grid1.ActualHeight)) + (this.ActualHeight - System.Windows.Forms.SystemInformation.ToolWindowCaptionHeight), 0, 0);
+
+                if (grid1.Margin.Left > 0)
+                    grid1.Margin = new Thickness(0, grid1.Margin.Top, 0, 0);
+                if (grid1.Margin.Top > 0)
+                    grid1.Margin = new Thickness(grid1.Margin.Left, 0, 0, 0);
+            }
+        }
+
+        private void grid1_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            // Set Min and Max Height and Width
+            // Center on mouse
+
+            grid1.MinHeight = this.Height;
+            grid1.MinWidth = this.Width;
+
+            int a = e.Delta; // +/- 120
+            if (a > 0)
+            {
+                grid1.Height = grid1.Height * scale;
+                grid1.Width = grid1.Width * scale;
+
+                grid1.Margin = new Thickness(grid1.Margin.Left * scale, grid1.Margin.Top * scale, 0, 0);
+
+                foreach (CityDetail d in details)
+                {
+                    d.Height = d.Height * scale;
+                    d.Width = d.Width * scale;
+
+                    d.Margin = new Thickness(d.Margin.Left * scale, d.Margin.Top * scale, 0, 0);
+                }
+
+                foreach (CityOverlay o in cities)
+                {
+                    o.Height = o.Height * scale;
+                    o.Width = o.Width * scale;
+
+                    o.expand(scale);
+                    o.Margin = new Thickness(o.Margin.Left * scale, o.Margin.Top * scale, 0, 0);
+                }
+            }
+            else
+            {
+                //grid1.RenderTransform = new ScaleTransform(.9, .9);
+
+                grid1.LayoutTransform = new ScaleTransform(currScale, currScale, grid1.ActualWidth / 2, grid1.ActualHeight / 2);
+
+                //grid1.InvalidateVisual();
+                /*grid1.Height = grid1.Height / scale;
+                grid1.Width = grid1.Width / scale;
+
+                grid1.Margin = new Thickness(grid1.Margin.Left / scale, grid1.Margin.Top / scale, 0, 0);
+                grid1.InvalidateVisual();*/
+
+                foreach (CityDetail d in details)
+                {
+                    d.LayoutTransform = new ScaleTransform(currScale, currScale);
+                    /*d.control.Height = d.control.Height / 2;
+                    d.control.Width = d.control.Width / 2;
+
+                    d.Margin = new Thickness(d.Margin.Left / scale, d.Margin.Top / scale, 0, 0);*/
+                }
+
+                foreach (CityOverlay o in cities)
+                {
+                    o.RenderTransform = new ScaleTransform(currScale, currScale, o.ActualWidth / 2, o.ActualHeight / 2);
+                    o.shrink(currScale);
+                    //o.InvalidateVisual();
+                    /*o.Height = o.ActualHeight / scale;
+                    o.Width = o.ActualHeight / scale;
+
+                    o.shrink(scale);
+                    //o.Margin = new Thickness(o.Margin.Left, o.Margin.Top, 0, 0);
+                    o.Margin = new Thickness(o.Margin.Left / scale, o.Margin.Top / scale, o.Margin.Right / scale, o.Margin.Bottom / scale);*/
+                }
+
+                currScale -= .1;
+            }
+
+            
+        }
+
+        private void grid1_MouseLeave(object sender, MouseEventArgs e)
+        {
+            moving = false;
+        }
+
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            grid1.Margin = new Thickness(grid1.Margin.Left, grid1.Margin.Top, 0, 0);
+        }
+
+        private void grid1_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            foreach (CityDetail d in details)
+            {
+                d.Visibility = Visibility.Hidden;
+            }
+        }
+
+        public static void cleanBoard()
+        {
+            foreach (CityDetail d in details)
+            {
+                if (d.Visibility == Visibility.Visible)
+                {                    
+                    d.visibleToggle();
+                    break;
+                }
+            }
+        }
+    }
+}

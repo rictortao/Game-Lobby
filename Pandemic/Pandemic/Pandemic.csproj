@@ -1,0 +1,485 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{20C16DFA-3150-424C-8805-F8C387174346}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Pandemic</RootNamespace>
+    <AssemblyName>Pandemic</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls, Version=2010.3.1110.40, Culture=neutral, PublicKeyToken=5803cfa389c90ce7" />
+    <Reference Include="Telerik.Windows.Controls.Navigation, Version=2010.3.1110.40, Culture=neutral, PublicKeyToken=5803cfa389c90ce7" />
+    <Reference Include="Telerik.Windows.Data, Version=2010.3.1110.40, Culture=neutral, PublicKeyToken=5803cfa389c90ce7" />
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="UIAutomationTypes" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="Game\APIs\API.cs" />
+    <Compile Include="Game\APIs\MPI.cs" />
+    <Compile Include="Game\APIs\SPI.cs" />
+    <Compile Include="Game\DataTypes\Decks\Deck.cs" />
+    <Compile Include="Game\DataTypes\GameState.cs" />
+    <Compile Include="Game\DataTypes\Location.cs" />
+    <Compile Include="Game\DataTypes\Players\Dispatcher.cs" />
+    <Compile Include="Game\DataTypes\Players\Medic.cs" />
+    <Compile Include="Game\DataTypes\Players\Operations.cs" />
+    <Compile Include="Game\DataTypes\Players\Player.cs" />
+    <Compile Include="Game\DataTypes\Players\Researcher.cs" />
+    <Compile Include="Game\DataTypes\Players\Scientist.cs" />
+    <Compile Include="Game\DataTypes\Virus.cs" />
+    <Compile Include="Game\DataTypes\virusPics.cs" />
+    <Compile Include="Game\game.cs" />
+    <Compile Include="Game\UI\ActionCard.xaml.cs">
+      <DependentUpon>ActionCard.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Game\UI\CityDetail.xaml.cs">
+      <DependentUpon>CityDetail.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Game\UI\CityOverlay.xaml.cs">
+      <DependentUpon>CityOverlay.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Game\UI\gameBoard.xaml.cs">
+      <DependentUpon>gameBoard.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Game\UI\vDiscard.xaml.cs">
+      <DependentUpon>vDiscard.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Images.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Images.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Lobby\DataTypes\client.cs" />
+    <Compile Include="Lobby\DataTypes\cont.cs" />
+    <Compile Include="Game\DataTypes\Cards\Card.cs" />
+    <Compile Include="Game\DataTypes\Cards\epidemicCard.cs" />
+    <Compile Include="Game\DataTypes\Cards\eventCard.cs" />
+    <Compile Include="Game\DataTypes\Cards\locationCard.cs" />
+    <Compile Include="Game\DataTypes\Cards\playerCard.cs" />
+    <Compile Include="Game\DataTypes\Cards\virusCard.cs" />
+    <Compile Include="Game\DataTypes\Decks\playerDeck.cs" />
+    <Compile Include="Game\DataTypes\Decks\virusDeck.cs" />
+    <Compile Include="Game\Servers\gameServer.cs" />
+    <Compile Include="Lobby\DataTypes\dvals.cs" />
+    <Compile Include="Lobby\DataTypes\lobbyVals.cs" />
+    <Compile Include="Lobby\Servers\chatHelper.cs" />
+    <Compile Include="Lobby\Servers\lobbyHelper.cs" />
+    <Compile Include="Lobby\Servers\lobbyServ.cs" />
+    <Compile Include="Lobby\UI\lobby.xaml.cs">
+      <DependentUpon>lobby.xaml</DependentUpon>
+    </Compile>
+    <Page Include="Game\UI\ActionCard.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Game\UI\CityDetail.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Game\UI\CityOverlay.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Game\UI\Dictionary1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Game\UI\gameBoard.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Game\UI\vDiscard.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="Lobby\UI\lobby.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Images.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Images.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\cover.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\pandemic.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\pandemic1.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\lobby.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Red1_.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Red1_ %282%29.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\gameboard.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\gameboard2.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\cityControl4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\red3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\yellow3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\black1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\black2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\black3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\blue1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\blue2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\blue3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\black1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\black2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\black3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\blue1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\blue2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\blue3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\red1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\red2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\red3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\yellow1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\yellow2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\yellow3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\blackDrop.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\station.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\basicAction.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\newBoard.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Mexico_City.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Images\virusCards\Bogota.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Buenos_Aires.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Johannesburg.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Khartoum.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Kinshasa.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Lagos.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Lima.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Los_Angeles.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Mexico_City.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Miami.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Santiago.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Sao_Paulo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Images\virusCards\Bangkok.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Beijing.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Hong_Kong.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Ho_Chi_Minh_City.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Jakarta.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Manila.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Osaka.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Seoul.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Shanghai.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Sydney.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Taipei.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Tokyo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Images\virusCards\Atlanta.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Chicago.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Essen.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\London.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Madrid.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Milan.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\New_York.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Paris.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\San_Francisco.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\St_Petersburg.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Toronto.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Washington.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Images\virusCards\Algiers.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Baghdad.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Cairo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Chennai.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Delhi.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Istanbul.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Karachi.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Kolkata.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Moscow.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Mumbai.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Riyadh.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\virusCards\Tehran.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\virusBack.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\outbreakToken.png" />
+    <Resource Include="Images\rateToken.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\blackCured.png" />
+    <Resource Include="Images\blueCured.png" />
+    <Resource Include="Images\eradicated.png" />
+    <Resource Include="Images\purpleCured.png" />
+    <Resource Include="Images\redCured.png" />
+    <Resource Include="Images\yellowCured.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Pawns\blackPawn.png" />
+    <Resource Include="Images\Pawns\bluePawn.png" />
+    <Resource Include="Images\Pawns\brownPawn.png" />
+    <Resource Include="Images\Pawns\greenPawn.png" />
+    <Resource Include="Images\Pawns\greyPawn.png" />
+    <Resource Include="Images\Pawns\ltbrownPawn.png" />
+    <Resource Include="Images\Pawns\orangePawn.png" />
+    <Resource Include="Images\Pawns\pinkPawn.png" />
+    <Resource Include="Images\Pawns\purplePawn.png" />
+    <Resource Include="Images\Pawns\redPawn.png" />
+    <Resource Include="Images\Pawns\whitePawn.png" />
+    <Resource Include="Images\Pawns\yellowPawn.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

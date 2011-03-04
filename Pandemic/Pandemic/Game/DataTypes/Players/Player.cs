@@ -1,0 +1,95 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+using Pandemic.Game.DataTypes.Cards;
+
+namespace Pandemic.Game.DataTypes.Players
+{
+    class Player
+    {
+        int actionPoints;
+        int role;
+        string name;
+        Location pos;
+        List<playerCard> hand;
+
+        public Player(string name, int role)
+        {
+            this.name = name;
+            this.role = role;
+
+            // Init location Atlanta
+            /*this.pos = game.State.locations.Find(o => o.Name == game.blue[0]);*/
+            hand = new List<playerCard>();            
+        }
+
+        public void Draw(int number)
+        {
+            /*for(int i = 0; i < (number - 1); i++)
+            {
+                hand.Add((playerCard)game.State.pDeck.Draw());
+
+                if (hand.Count > 7)
+                {
+                    // Discard Protocol
+                }
+            }*/
+        }
+
+        public void addToHand(Card pCard)
+        {
+            hand.Add((playerCard)pCard);
+
+            if (hand.Count > 7)
+            {
+                // Discard Protocol
+            }
+        }
+
+        /* Actions */
+
+        #region /* Basic Actions */
+        // Move Player to Adjacent City
+        public void Drive()
+        {
+        }
+
+        // Discard a card to move Player to the city on Card
+        public void DirectFlight()
+        {
+        }
+
+        // Discard card showing curr city to move to any other city
+        public void CharterFlight()
+        {
+        }
+
+        // Move to city with station if this city has a station
+        public void ShuttleFlight()
+        {
+        }
+        #endregion
+
+        #region /* Special Actions */
+        public void BuildStation()
+        {
+        }
+
+        public void DiscoverCure()
+        {
+        }
+
+        public void TreadDisease()
+        {
+        }
+
+        public void ShareKnowledge()
+        {
+        }
+        #endregion
+
+        public string Name { get { return name; } }
+    }
+}

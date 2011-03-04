@@ -1,0 +1,273 @@
+﻿<Window x:Class="Pandemic.Game.UI.gameBoard"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:Pandemic.Game.UI"
+        Title="gameBoard" Height="598" Width="951" Background="{x:Null}" SizeChanged="Window_SizeChanged" Loaded="Window_Loaded">
+    <Grid>
+        <Grid Height="1202" HorizontalAlignment="Left" Name="grid1" VerticalAlignment="Top" Width="1794" MouseDown="grid1_MouseDown" MouseLeftButtonDown="grid1_MouseLeftButtonDown" MouseLeftButtonUp="grid1_MouseLeftButtonUp" MouseMove="grid1_MouseMove" MouseWheel="grid1_MouseWheel" MouseLeave="grid1_MouseLeave" MaxHeight="1202" MaxWidth="1694" MouseRightButtonDown="grid1_MouseRightButtonDown">
+            <!-- Blue Cities -->
+            <local:CityDetail
+                x:Name="WashingtonD"
+                Margin="435,534,1121,620" />
+            <local:CityDetail
+                x:Name="AtlantaD"
+                Margin="303,533,1252,620" />
+            <local:CityDetail
+                x:Name="MilanD"
+                Margin="864,408,696,744" />
+            <local:CityDetail
+                x:Name="SanFranciscoD"
+                Margin="95,496,1461,658" />
+            <local:CityDetail
+                x:Name="ChicagoD"
+                Margin="232,441,1323,712" />
+            <local:CityDetail
+                x:Name="TorontoD"
+                Margin="353,440,1207,712" />
+            <local:CityDetail
+                x:Name="NewYorkD"
+                Margin="470,436,1086,718" />
+            <local:CityDetail
+                x:Name="MadridD"
+                Margin="662,496,893,657" />
+            <local:CityDetail
+                x:Name="LondonD"
+                Margin="673,355,887,797" />
+            <local:CityDetail
+                x:Name="ParisD"
+                Margin="766,429,790,725" />
+            <local:CityDetail
+                x:Name="EssenD"
+                Margin="801,323,754,830" />
+            <local:CityDetail
+                x:Name="StPetersburgD"
+                Margin="926,303,634,849" />
+            
+            <local:CityOverlay
+                x:Name="Washington" Margin="400,506,1213,620" />
+            <local:CityOverlay
+                x:Name="Atlanta" Margin="269,506,1344,620" />
+            <local:CityOverlay
+                x:Name="Milan" Margin="830,378,783,748" />
+            <local:CityOverlay
+                x:Name="SanFrancisco" Margin="57,472,1556,654" />
+            <local:CityOverlay
+                x:Name="Chicago" Margin="196,408,1417,718" />
+            <local:CityOverlay
+                x:Name="Toronto" Margin="312,408,1301,718" />
+            <local:CityOverlay
+                x:Name="NewYork" Margin="427,408,1186,718" />
+            <local:CityOverlay
+                x:Name="Madrid" Margin="626,464,987,662" />
+            <local:CityOverlay
+                x:Name="London" Margin="626,320,987,806" />
+            <local:CityOverlay
+                x:Name="Paris" Margin="726,396,887,730" />
+            <local:CityOverlay
+                x:Name="Essen" Margin="757,296,856,830" />
+            <local:CityOverlay
+                x:Name="StPetersburg" Margin="886,268,727,858" />
+
+            
+            <!-- /Blue Cities -->
+
+            <!-- Yellow Cities -->
+            <local:CityOverlay
+                x:Name="LosAngeles" Margin="83,569,1530,557" />
+            <local:CityOverlay
+                x:Name="MexicoCity" Margin="196,606,1417,520" />
+            <local:CityOverlay
+                x:Name="Miami" Margin="353,588,1260,538" />
+            <local:CityOverlay
+                x:Name="Bogota" Margin="343,682,1270,444" />
+            <local:CityOverlay
+                x:Name="Lima" Margin="279,812,1334,314" />
+            <local:CityOverlay
+                x:Name="Santiago" Margin="323,949,1290,177" />
+            <local:CityOverlay
+                x:Name="BuenosAires" Margin="435,927,1178,199" />
+            <local:CityOverlay
+                x:Name="SaoPaulo" Margin="507,831,1106,295" />
+            <local:CityOverlay
+                x:Name="Lagos" Margin="735,666,878,460" />
+            <local:CityOverlay
+                x:Name="Khartoum" Margin="886,656,727,470" />
+            <local:CityOverlay
+                x:Name="Kinshasa" Margin="801,758,812,368" />
+            <local:CityOverlay
+                x:Name="Johannesburg" Margin="859,862,754,264" />
+
+            <local:CityDetail
+                x:Name="LosAngelesD"
+                Margin="122,593,1434,561" />
+            <local:CityDetail
+                x:Name="MexicoCityD"
+                Margin="236,633,1319,520" />
+            <local:CityDetail
+                x:Name="MiamiD"
+                Margin="396,614,1164,538" />
+            <local:CityDetail
+                x:Name="BogotaD"
+                Margin="382,718,1174,436" />
+            <local:CityDetail
+                x:Name="LimaD"
+                Margin="316,843,1239,310" />
+            <local:CityDetail
+                x:Name="SantiagoD"
+                Margin="361,978,1199,174" />
+            <local:CityDetail
+                x:Name="BuenosAiresD"
+                Margin="476,959,1080,195" />
+            <local:CityDetail
+                x:Name="SaoPauloD"
+                Margin="542,862,1013,291" />
+            <local:CityDetail
+                x:Name="LagosD"
+                Margin="770,696,790,456" />
+            <local:CityDetail
+                x:Name="KinshasaD"
+                Margin="834,789,722,365" />
+            <local:CityDetail
+                x:Name="KhartoumD"
+                Margin="926,689,629,464" />
+            <local:CityDetail
+                x:Name="JohannesburgD"
+                Margin="898,897,662,255" />
+            <!-- /Yellow Cities -->
+
+            <!-- Black Cities -->
+            <local:CityOverlay
+                x:Name="Moscow" Margin="973,342,640,784" />
+            <local:CityOverlay
+                x:Name="Istanbul" Margin="874,448,739,678" />
+            <local:CityOverlay
+                x:Name="Algiers" Margin="735,533,878,593" />
+            <local:CityOverlay
+                x:Name="Cairo" Margin="845,565,768,561" />
+            <local:CityOverlay
+                x:Name="Baghdad" Margin="961,506,652,620" />
+            <local:CityOverlay
+                x:Name="Tehran" Margin="1053,424,560,702" />
+            <local:CityOverlay
+                x:Name="Riyadh" Margin="979,614,634,512" />
+            <local:CityOverlay
+                x:Name="Delhi" Margin="1165,486,448,640" />
+            <local:CityOverlay
+                x:Name="Karachi" Margin="1060,534,553,592" />
+            <local:CityOverlay
+                x:Name="Mumbai" Margin="1079,656,534,470" />
+            <local:CityOverlay
+                x:Name="Kolkata" Margin="1260,543,353,583" />
+            <local:CityOverlay
+                x:Name="Chennai" Margin="1179,704,434,422" />
+
+            <local:CityDetail
+                x:Name="MoscowD"
+                Margin="1009,374,547,780" />
+            <local:CityDetail
+                x:Name="AlgiersD"
+                Margin="775,560,780,593" />
+            <local:CityDetail
+                x:Name="IstanbulD"
+                Margin="913,481,647,671" />
+            <local:CityDetail
+                x:Name="CairoD"
+                Margin="882,593,674,561" />
+            <local:CityDetail
+                x:Name="BaghdadD"
+                Margin="1002,533,553,620" />
+            <local:CityDetail
+                x:Name="TehranD"
+                Margin="1093,457,467,695" />
+            <local:CityDetail
+                x:Name="RiyadhD"
+                Margin="1015,642,541,512" />
+            <local:CityDetail
+                x:Name="KarachiD"
+                Margin="1093,560,462,593" />
+            <local:CityDetail
+                x:Name="DelhiD"
+                Margin="1204,520,356,632" />
+            <local:CityDetail
+                x:Name="MumbaiD"
+                Margin="1118,682,438,472" />
+            <local:CityDetail
+                x:Name="ChennaiD"
+                Margin="1218,731,337,422" />
+            <local:CityDetail
+                x:Name="KolkataD"
+                Margin="1299,569,261,583" />
+            <!-- /Black Cities -->
+
+            <!-- Red Cities -->
+            <local:CityOverlay
+                x:Name="Beijing" Margin="1315,382,298,744" />
+            <local:CityOverlay
+                x:Name="Seoul" Margin="1448,382,165,744" />
+            <local:CityOverlay
+                x:Name="Shanghai" Margin="1333,486,280,640" />
+            <local:CityOverlay
+                x:Name="Tokyo" Margin="1557,448,56,678" />
+            <local:CityOverlay
+                x:Name="Osaka" Margin="1546,534,67,592" />
+            <local:CityOverlay
+                x:Name="HongKong" Margin="1347,580,266,546" />
+            <local:CityOverlay
+                x:Name="Taipei" Margin="1467,580,146,546" />
+            <local:CityOverlay
+                x:Name="Bangkok" Margin="1266,642,347,484" />
+            <local:CityOverlay
+                x:Name="HoChiMinhCity" Margin="1363,696,250,430" />
+            <local:CityOverlay
+                x:Name="Manila" Margin="1474,696,139,430" />
+            <local:CityOverlay
+                x:Name="Jakarta" Margin="1276,772,337,354" />
+            <local:CityOverlay
+                x:Name="Sydney" Margin="1572,914,41,212" />
+
+            <local:CityDetail
+                x:Name="BeijingD"
+                Margin="1353,415,203,739" />
+            <local:CityDetail
+                x:Name="SeoulD"
+                Margin="1485,415,70,738" />
+            <local:CityDetail
+                x:Name="ShanghaiD"
+                Margin="1375,520,185,632" />
+            <local:CityDetail
+                x:Name="TokyoD"
+                Margin="1596,481,-40,673" />
+            <local:CityDetail
+                x:Name="OsakaD"
+                Margin="1587,572,-32,581" />
+            <local:CityDetail
+                x:Name="TaipeiD"
+                Margin="1507,609,53,543" />
+            <local:CityDetail
+                x:Name="HongKongD"
+                Margin="1385,611,171,543" />
+            <local:CityDetail
+                x:Name="BangkokD"
+                Margin="1308,678,247,475" />
+            <local:CityDetail
+                x:Name="HoChiMinhCityD"
+                Margin="1406,726,154,426" />
+            <local:CityDetail
+                x:Name="ManilaD"
+                Margin="1515,724,41,430" />
+            <local:CityDetail
+                x:Name="JakartaD"
+                Margin="1318,799,237,354" />
+            <local:CityDetail
+                x:Name="SydneyD"
+                Margin="1612,944,-52,208" />
+            <!-- /Red Cities -->
+            <Grid.Background>
+                <ImageBrush ImageSource="/Pandemic;component/Images/gameboard2.jpg" />
+            </Grid.Background>
+            
+            
+        </Grid>
+    </Grid>
+    
+</Window>
